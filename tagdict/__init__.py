@@ -26,15 +26,13 @@ class TagDict(object):
         '''  Add an item with a list of tags
         if tags is empty, the item will not be added to
         the TagDict
-        It is the same as
-        for tag in tags: self[tag] = item
+        
         '''
-        itemid = id(item)
         if type(tags) is str: tags = [tags,]
         tags = set(tags)
-        self._ids[itemid] = (item,tags)
+        self._ids[id(item)] = (item,tags)
         for tag in tags:
-            self.data[tag].add(itemid)
+            self.data[tag].add(id(item))
     
     def __getitem__(self,tags):
         ''' Get the items that share the tags
@@ -73,16 +71,14 @@ class TagDict(object):
     def add_tag(self,item,tag):
         ''' Add a tag to an item in the TagDict 
         '''
-        itemid = id(item)
-        self._ids[itemid][1].add(tag)
-        self.data[tag].add(itemid)
+        self._ids[id(item)][1].add(tag)
+        self.data[tag].add(id(item))
     
     def remove_tag(self,item,tag):
         ''' Remove a tag from an item in the TagDict
         '''
-        itemid = id(item)
-        self._ids[itemid][1].remove(tag)
-        self.data[tag].remove(itemid)
+        self._ids[id(item)][1].remove(tag)
+        self.data[tag].remove(id(item))
         if len(self.data[tag]) == 0:
             del self.data[tag]
     
