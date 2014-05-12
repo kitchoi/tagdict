@@ -1,7 +1,7 @@
 import collections as _collections
 import UserDict as _UserDict
 
-class IdDict(_UserDict.IterableUserDict):
+class _IdDict(_UserDict.IterableUserDict):
     def __missing__(self,key):
         raise KeyError("The item requested is not in the TagDict. "+\
                        "Perhaps more than one item were requested.")
@@ -21,7 +21,7 @@ class TagDict(object):
         # Keys are tags. Values are sets of ids
         self.data = _collections.defaultdict(set)
         # Keys are ids of the objects. Values are (object,tags)
-        self._ids = IdDict()
+        self._ids = _IdDict()
     
     def add(self,item,tags):
         '''  Add an item with a list of tags
