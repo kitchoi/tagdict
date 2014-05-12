@@ -119,7 +119,7 @@ class TagDict(object):
     def view_all(self):
         ''' Show all the items and their tags
         '''
-        return tuple(self._ids.values)
+        return tuple(self._ids.values())
         
 
 if __name__ == '__main__':
