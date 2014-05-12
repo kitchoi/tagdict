@@ -15,7 +15,10 @@ Example
 data = TagDict()
 data.add({'Name':'Ann'},tags=['Female','Student'])
 data.add({'Name':'Ben'},tags=['Male','Student'])
-data['Student'] # --> ({'Name':'Ben'},{'Name':'Ann'})
-data['Female'] # --> {'Name':'Ann'}
+data.add({'Name':'Tina'},tags=['Female','Volunteer'])
+data.add({'Name':'Mark'},tags=['Male','Volunteer','Student'])
+data['Student'] # --> ({'Name':'Ann'},{'Name':'Ben'},{'Name':'Mark'})
+data['Female','Volunteer'] # --> {'Name':'Tina'}
+data['Volunteer','Male'] # --> {'Name':'Mark'}
 </code>
 </pre>
