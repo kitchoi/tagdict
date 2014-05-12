@@ -3,7 +3,8 @@ import UserDict as _UserDict
 
 class IdDict(_UserDict.IterableUserDict):
     def __missing__(self,key):
-        raise KeyError("Apparently more than one item were requested.")
+        raise KeyError("The item requested is not in the TagDict. "+\
+                       "Perhaps more than one item were requested.")
 
 class TagDict(object):
     ''' 
@@ -26,7 +27,9 @@ class TagDict(object):
         '''  Add an item with a list of tags
         if tags is empty, the item will not be added to
         the TagDict
-        
+        Input:
+        item   - an object
+        tags   - a string or a list of strings
         '''
         if type(tags) is str: tags = [tags,]
         tags = set(tags)
@@ -65,18 +68,28 @@ class TagDict(object):
     def remove(self,item):
         ''' Remove an item from the TagDict.
         Any tag that points to no object will be removed too.
+        Input:
+        item   - an object inside the TagDict
         '''
         self.replace_tags(item,[])
     
     def add_tag(self,item,tag):
         ''' Add a tag to an item in the TagDict 
+        Input:
+        item   - an object inside the TagDict
+        tag    - a string
         '''
+        assert type(tag) is str
         self._ids[id(item)][1].add(tag)
         self.data[tag].add(id(item))
     
     def remove_tag(self,item,tag):
         ''' Remove a tag from an item in the TagDict
+        Input:
+        item   - an object inside the TagDict
+        tag    - a string
         '''
+        assert type(tag) is str
         self._ids[id(item)][1].remove(tag)
         self.data[tag].remove(id(item))
         if len(self.data[tag]) == 0:
@@ -85,7 +98,11 @@ class TagDict(object):
     def replace_tags(self,item,newtags):
         ''' Replace the tags of an item.
         Any tag that points to no object will be removed too.
+        Input:
+        item     - an object inside the TagDict
+        newtags  - a string or a list of strings
         '''
+        if type(newtags) is str: newtags = {newtags}
         if type(newtags) is not set: newtags = set(newtags)
         oldtags = self._ids[id(item)][1]
         tags2rm = oldtags - newtags
@@ -115,7 +132,7 @@ if __name__ == '__main__':
     data.remove_tag(data['Male','Student'],'Student')
     print data['Student']               # --> {'Name': 'Ann'}
     # Replace all the tags of one of the items
-    data.replace_tags(data['Female','Mother','Teacher'],['Human',])
+    data.replace_tags(data['Female','Mother','Teacher'],'Human')
     print data['Mother']                # --> ()
     print data['Human']                 # --> {'Age': 30, 'Name': 'Tina'}
     # Change the content of one of the items
