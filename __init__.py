@@ -115,6 +115,11 @@ class TagDict(object):
             self.add_tag(item,tag)
         if len(newtags) == 0:
             del self._ids[id(item)]
+    
+    def view_all(self):
+        ''' Show all the items and their tags
+        '''
+        return tuple(self._ids.values)
         
 
 if __name__ == '__main__':
