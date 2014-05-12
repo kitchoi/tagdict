@@ -1,7 +1,7 @@
 tagdict
 =======
 This module contains a class TagDict that is similar to the Python 
-dictionary container but instead of mapping an object to a hashable 
+dictionary container but instead of mapping an object to a user-defined 
 key, it uses the id of the object as the key for tracking and manages 
 a set of attributes or tags of the object.
 
