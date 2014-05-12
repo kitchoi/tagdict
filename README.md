@@ -67,7 +67,7 @@ print data['Human']                 # --> {'Age': 30, 'Name': 'Tina'}
 <pre>
 <code class="python">
 data['Human']['Age']=31
-print data['Human']                 # --> {'Age': 31, 'Name': 'Tina'
+print data['Human']                 # --> {'Age': 31, 'Name': 'Tina'}
 </code>
 </pre>
 
