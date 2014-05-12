@@ -53,7 +53,9 @@ class TagDict(object):
         if tags[0] == '*':
             return [ value[0] for value in self._ids.values() ]
         if type(tags) is str: tags = [tags,]
-        collected_ids = [ self.data[tag] for tag in tags ]
+        collected_ids = [ self.data[tag] 
+                          if tag in self.data else set()
+                          for tag in tags ]
         unique_ids = list(set.intersection(*collected_ids))
         if len(unique_ids) == 1:
             return self._ids[unique_ids[0]][0]
