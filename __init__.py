@@ -108,7 +108,7 @@ class TagDict(object):
         newtags  - a string or a list of strings
         '''
         if isinstance(newtags,str): newtags = {newtags}
-        if isinstance(newtags,set): newtags = set(newtags)
+        if not isinstance(newtags,set): newtags = set(newtags)
         oldtags = self._ids[id(item)][1]
         tags2rm = oldtags - newtags
         tags2add = newtags - oldtags
