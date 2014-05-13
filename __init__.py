@@ -1,7 +1,7 @@
-import collections as _collections
-import UserDict as _UserDict
+from collections import defaultdict
+from UserDict import IterableUserDict
 
-class _IdDict(_UserDict.IterableUserDict):
+class _IdDict(IterableUserDict):
     def __missing__(self,key):
         raise KeyError("The item requested is not in the TagDict. "+\
                        "Perhaps more than one item were requested.")
@@ -19,7 +19,7 @@ class TagDict(object):
     '''
     def __init__(self):
         # Keys are tags. Values are sets of ids
-        self.data = _collections.defaultdict(set)
+        self.data = defaultdict(set)
         # Keys are ids of the objects. Values are (object,tags)
         self._ids = _IdDict()
     
@@ -31,7 +31,7 @@ class TagDict(object):
         item   - an object
         tags   - a string or a list of strings
         '''
-        if type(tags) is str: tags = [tags,]
+        if isinstance(tags,str) : tags = [tags,]
         tags = set(tags)
         self._ids[id(item)] = (item,tags)
         for tag in tags:
@@ -52,7 +52,7 @@ class TagDict(object):
         '''
         if tags[0] == '*':
             return [ value[0] for value in self._ids.values() ]
-        if type(tags) is str: tags = [tags,]
+        if isinstance(tags,str): tags = [tags,]
         collected_ids = [ self.data[tag] 
                           if tag in self.data else set()
                           for tag in tags ]
@@ -81,7 +81,7 @@ class TagDict(object):
         item   - an object inside the TagDict
         tag    - a string
         '''
-        assert type(tag) is str
+        assert isinstance(tag,str)
         self._ids[id(item)][1].add(tag)
         self.data[tag].add(id(item))
     
@@ -91,7 +91,7 @@ class TagDict(object):
         item   - an object inside the TagDict
         tag    - a string
         '''
-        assert type(tag) is str
+        assert isinstance(tag,str)
         self._ids[id(item)][1].remove(tag)
         self.data[tag].remove(id(item))
         if len(self.data[tag]) == 0:
@@ -104,8 +104,8 @@ class TagDict(object):
         item     - an object inside the TagDict
         newtags  - a string or a list of strings
         '''
-        if type(newtags) is str: newtags = {newtags}
-        if type(newtags) is not set: newtags = set(newtags)
+        if isinstance(newtags,str): newtags = {newtags}
+        if isinstance(newtags,set): newtags = set(newtags)
         oldtags = self._ids[id(item)][1]
         tags2rm = oldtags - newtags
         tags2add = newtags - oldtags
