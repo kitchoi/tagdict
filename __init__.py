@@ -3,8 +3,7 @@ from UserDict import IterableUserDict
 
 class _IdDict(IterableUserDict):
     def __missing__(self,key):
-        raise KeyError("The item requested is not in the TagDict. "+\
-                       "Perhaps more than one item were requested.")
+        raise KeyError("The item requested is not in the TagDict.")
 
 class TagDict(object):
     ''' 
@@ -60,12 +59,16 @@ class TagDict(object):
         if len(unique_ids) == 1:
             return self._ids[unique_ids[0]][0]
         else:
-            return tuple([ self._ids[itemid][0] for itemid in unique_ids ])
+            return tuple([ self._ids[itemid][0] 
+                           for itemid in unique_ids ])
     
     def __repr__(self):
-        return "{"+', '.join(
-            ['\''+tag +"\' : "+str(len(self.data[tag]))+" items" 
-             for tag in self.data.keys()])+"}"
+        pairs = [ "{tag} : {count} item{plural}".\
+                  format(tag=tag,
+                         count=len(self.data[tag]),
+                         plural='s' if len(self.data[tag]) > 1 else '')
+                  for tag in self.data.keys() ]
+        return "<TagDict {"+", ".join(pairs)+"}>"
     
     def remove(self,item):
         ''' Remove an item from the TagDict.
