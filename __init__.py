@@ -1,9 +1,4 @@
-from collections import defaultdict
-from UserDict import IterableUserDict
-
-class _IdDict(IterableUserDict):
-    def __missing__(self,key):
-        raise KeyError("The item requested is not in the TagDict.")
+import collections as _collections
 
 class TagDict(object):
     ''' 
@@ -18,9 +13,9 @@ class TagDict(object):
     '''
     def __init__(self):
         # Keys are tags. Values are sets of ids
-        self.data = defaultdict(set)
+        self.data = _collections.defaultdict(set)
         # Keys are ids of the objects. Values are (object,tags)
-        self._ids = _IdDict()
+        self._ids = {}
     
     def add(self,item,tags):
         '''  Add an item with a list of tags
@@ -29,9 +24,12 @@ class TagDict(object):
         Input:
         item   - an object
         tags   - a string or a list of strings
+        Also raise an Exception if the item is already added
         '''
         if isinstance(tags,str) : tags = [tags,]
         tags = set(tags)
+        if id(item) in self._ids:
+            raise ValueError("Item already exists in the TagDict")
         self._ids[id(item)] = (item,tags)
         for tag in tags:
             self.data[tag].add(id(item))
@@ -52,8 +50,7 @@ class TagDict(object):
         if tags[0] == '*':
             return [ value[0] for value in self._ids.values() ]
         if isinstance(tags,str): tags = [tags,]
-        collected_ids = [ self.data[tag] 
-                          if tag in self.data else set()
+        collected_ids = [ self.data.get(tag,set())
                           for tag in tags ]
         unique_ids = list(set.intersection(*collected_ids))
         if len(unique_ids) == 1:
@@ -85,7 +82,10 @@ class TagDict(object):
         tag    - a string
         '''
         assert isinstance(tag,str)
-        self._ids[id(item)][1].add(tag)
+        try:
+            self._ids[id(item)][1].add(tag)
+        except KeyError:
+            raise KeyError(str(item)+" is not in the TagDict.")
         self.data[tag].add(id(item))
     
     def remove_tag(self,item,tag):
@@ -95,7 +95,10 @@ class TagDict(object):
         tag    - a string
         '''
         assert isinstance(tag,str)
-        self._ids[id(item)][1].remove(tag)
+        try:
+            self._ids[id(item)][1].remove(tag)
+        except KeyError:
+            raise KeyError(str(item)+" is not in the TagDict.")
         self.data[tag].remove(id(item))
         if len(self.data[tag]) == 0:
             del self.data[tag]
@@ -109,7 +112,10 @@ class TagDict(object):
         '''
         if isinstance(newtags,str): newtags = {newtags}
         if not isinstance(newtags,set): newtags = set(newtags)
-        oldtags = self._ids[id(item)][1]
+        try:
+            oldtags = self._ids[id(item)][1]
+        except KeyError:
+            raise KeyError(str(item)+" is not in the TagDict.")
         tags2rm = oldtags - newtags
         tags2add = newtags - oldtags
         for tag in tags2rm:
@@ -123,7 +129,23 @@ class TagDict(object):
         ''' Show all the items and their tags
         '''
         return tuple(self._ids.values())
-        
+    
+    def get_tags(self,item):
+        try:
+            return list(self._ids[id(item)][1])
+        except KeyError:
+            raise KeyError(str(item)+" is not in the TagDict.")
+    
+    def update(self,other):
+        ''' Update this TagDict with another TagDict
+        '''
+        for itemid,item_info in other._ids.items():
+            other_item,other_tags = item_info
+            if itemid in self._ids:
+                self_item,self_tags = self._ids[itemid]
+                self.replace_tags(item,self_tags.union(other_tags))
+            else:
+                self.add(other_item,other_tags)
 
 if __name__ == '__main__':
     data = TagDict()
