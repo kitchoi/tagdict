@@ -13,7 +13,7 @@ class TagDict(object):
     '''
     def __init__(self):
         # Keys are tags. Values are sets of ids
-        self.data = defaultdict(set)
+        self.data = _collections.defaultdict(set)
         # Keys are ids of the objects. Values are (object,tags)
         self._ids = {}
     
