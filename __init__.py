@@ -1,5 +1,6 @@
 import collections as _collections
 
+
 class TagDict(object):
     ''' 
     TagDict is similar to a dictionary except 
@@ -18,9 +19,9 @@ class TagDict(object):
         self._ids = {}
     
     def add(self,item,tags):
-        '''  Add an item with a list of tags
-        if tags is empty, the item will not be added to
-        the TagDict
+        '''  Add an item with a list of tags.
+        
+        If tags is empty, the item will not be added to the TagDict
         Input:
         item   - an object
         tags   - a string or a list of strings
@@ -76,7 +77,8 @@ class TagDict(object):
         self.replace_tags(item,[])
     
     def add_tag(self,item,tag):
-        ''' Add a tag to an item in the TagDict 
+        ''' Add a tag to an item in the TagDict
+        
         Input:
         item   - an object inside the TagDict
         tag    - a string
@@ -90,6 +92,7 @@ class TagDict(object):
     
     def remove_tag(self,item,tag):
         ''' Remove a tag from an item in the TagDict
+        
         Input:
         item   - an object inside the TagDict
         tag    - a string
@@ -105,7 +108,9 @@ class TagDict(object):
     
     def replace_tags(self,item,newtags):
         ''' Replace the tags of an item.
+        
         Any tag that points to no object will be removed too.
+        
         Input:
         item     - an object inside the TagDict
         newtags  - a string or a list of strings
@@ -125,10 +130,22 @@ class TagDict(object):
         if len(newtags) == 0:
             del self._ids[id(item)]
     
-    def view_all(self):
-        ''' Show all the items and their tags
-        '''
+    def view_all_inputs(self):
+        ''' Show all the items and their tags'''
         return tuple(self._ids.values())
+    
+    def view_all_bytags(self,tags=None):
+        ''' Show tags and all the corresponding items
+
+        Input:
+        tags  - a tag or a list of tags (default: all tags)
+        '''
+        if tags is None: tags = self.data.keys()
+        if isinstance(tags,str):
+            tags = [tags,]
+        return { tag: [ self._ids[itemid][0] 
+                        for itemid in self.data[tag]] 
+                 for tag in tags }
     
     def get_tags(self,item):
         try:
@@ -137,8 +154,7 @@ class TagDict(object):
             raise KeyError(str(item)+" is not in the TagDict.")
     
     def update(self,other):
-        ''' Update this TagDict with another TagDict
-        '''
+        ''' Update this TagDict with another TagDict'''
         for itemid,item_info in other._ids.items():
             other_item,other_tags = item_info
             if itemid in self._ids:
@@ -154,26 +170,27 @@ if __name__ == '__main__':
     data.add({'Name':'Tom','Age':40},tags=['Male','Teacher'])
     data.add({'Name':'Tina','Age':30},tags=['Female','Teacher'])
     data.add({'Name':'Ann'},tags=['Female','Student'])
-    print data["*"]                     # --> All the items
-    print data['Teacher','Female']      # --> {'Age': 30, 'Name': 'Tina'}
-    print data['Student']               # --> ({'Name': 'Ben'}, {'Name': 'Ann'})
+    print data["*"]                    # --> All the items
+    print data['Teacher','Female']     # --> {'Age': 30, 'Name': 'Tina'}
+    print data['Student']              # --> ({'Name': 'Ben'}, 
+                                       #      {'Name': 'Ann'})
     # Add one more tag for one of the items
     data.add_tag(data['Teacher','Female'],'Mother')
-    print data['Mother']                # --> {'Age': 30, 'Name': 'Tina'}
+    print data['Mother']               # --> {'Age': 30, 'Name': 'Tina'}
     # Remove a tag for one of the items
     data.remove_tag(data['Male','Student'],'Student')
-    print data['Student']               # --> {'Name': 'Ann'}
+    print data['Student']              # --> {'Name': 'Ann'}
     # Replace all the tags of one of the items
     data.replace_tags(data['Female','Mother','Teacher'],'Human')
-    print data['Mother']                # --> ()
-    print data['Human']                 # --> {'Age': 30, 'Name': 'Tina'}
+    print data['Mother']               # --> ()
+    print data['Human']                # --> {'Age': 30, 'Name': 'Tina'}
     # Change the content of one of the items
     data['Human']['Age']=31
-    print data['Human']                 # --> {'Age': 31, 'Name': 'Tina'}
+    print data['Human']                # --> {'Age': 31, 'Name': 'Tina'}
     # Remove an item
     data.remove(data['Student'])
-    print data['Student']               # ()
-    print data['*']                     # Only 3 items now
+    print data['Student']              # ()
+    print data['*']                    # Only 3 items now
     # Updating a list of items will fail
     try:
         data.add_tag(data['Male'],'Martian')
@@ -181,4 +198,5 @@ if __name__ == '__main__':
         print "More than one item were requested."
         for man in data['Male']:
             data.add_tag(man,'Martian')
-    print data['Martian']              # --> ({'Name': 'Ben'}, {'Age': 40, 'Name': 'Tom'})
+    print data['Martian']             # --> ({'Name': 'Ben'}, 
+                                      #      {'Age': 40, 'Name': 'Tom'})
