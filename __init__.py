@@ -131,8 +131,12 @@ class TagDict(object):
             del self._ids[id(item)]
     
     def view_all_inputs(self):
-        ''' Show all the items and their tags'''
-        return tuple(self._ids.values())
+        ''' Show all the items and their tags
+
+        Return a dict_values view object, which updates
+        with the TagDict itself
+        '''
+        return self._ids.viewvalues()
     
     def view_all_bytags(self,tags=None):
         ''' Show tags and all the corresponding items
